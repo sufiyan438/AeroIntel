@@ -6,6 +6,14 @@ DATA_DIR = BASE_DIR / "data"
 
 RAW_DATA = DATA_DIR / "raw"
 
+# UPLOAD_DIR = DATA_DIR / "uploads"
+
+# METADATA_DIR = DATA_DIR / "metadata"
+
+# AVIATION_INDEX_DIR = VECTOR_STORE_DIR / "aviation_index"
+
+# UPLOADED_INDEX_DIR = VECTOR_STORE_DIR / "uploaded_index"
+
 VECTOR_STORE = DATA_DIR / "vector_store" / "aviation_v1"
 
 CHUNK_SIZE = 1000

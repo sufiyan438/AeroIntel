@@ -11,3 +11,4 @@ class Document:
     category: str
     pages: int
     text: str
+    year: int | None
