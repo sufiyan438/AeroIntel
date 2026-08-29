@@ -23,3 +23,7 @@ CHUNK_OVERLAP = 200
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 TOP_K = 5
+
+FETCH_K = 40
+
+MMR_LAMBDA = 0.85

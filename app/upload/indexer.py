@@ -12,8 +12,12 @@ class IndexUpdater:
     def update(self, documents):
         index_dir = Path(self.index_path)
 
+        index_file = index_dir / "index.faiss"
+        pkl_file = index_dir / "index.pkl"
+
+
         #If this is first upload, then create new uploaded index
-        if not index_dir.exists():
+        if not index_dir.exists() or not pkl_file.exists():
             db = FAISS.from_documents(documents, self.embedding)
             db.save_local(self.index_path)
             print(f"Created uploaded index with {len(documents)} chunks.")

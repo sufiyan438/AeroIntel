@@ -5,4 +5,6 @@ class GraphState(TypedDict):
     scope: str
     route: str
     answer: str
-    documents: str
+    # documents: str
+    top_k: int
+    documents:list

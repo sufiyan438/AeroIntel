@@ -34,9 +34,12 @@ class VectorStore:
         pkl_file = Path(self.upload_path) / "index.pkl"
 
         if not index_file.exists() or not pkl_file.exists():
-            print("Creating uploaded FAISS store")
-            dummy = FAISS.from_texts(["Temporary document"], self.embedding)
-            dummy.save_local(self.upload_path)
+            # print("Creating uploaded FAISS store")
+            # dummy = FAISS.from_texts(["Temporary document"], self.embedding)
+            # dummy.save_local(self.upload_path)
+            print("No uploaded FAISS index found.")
+            return None
+
 
         return self.load(self.upload_path)
 

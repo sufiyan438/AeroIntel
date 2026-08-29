@@ -8,12 +8,13 @@ load_dotenv()
 class Neo4jService:
     def __init__(self):
         self.driver = GraphDatabase.driver(
-            "bolt://127.0.0.1:7687",
+            # "bolt://127.0.0.1:7687",
+            os.getenv("NEO4J_URI"),
             auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD"))
         )
 
     def execute(self, query, parameters=None):
-        with self.driver.session(database="neo4j") as session:
+        with self.driver.session(database=os.getenv("NEO4J_DATABASE")) as session:
 
             result = session.run(
                 query,

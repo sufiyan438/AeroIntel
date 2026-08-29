@@ -62,69 +62,163 @@ if "last_uploaded" not in st.session_state:
 
 top_k, uploaded_pdf, search_scope = render_sidebar()
 
+# if (uploaded_pdf is not None
+#     and uploaded_pdf.name != st.session_state.last_uploaded):
+
+#     progress = st.sidebar.progress(
+#         0,
+#         text="Uploading PDF..."
+#     )
+
+#     # -----------------------------
+#     # Save PDF
+#     # -----------------------------
+
+#     uploader = PDFUploader()
+
+#     file_path = uploader.save(uploaded_pdf)
+
+#     progress.progress(
+#         25,
+#         text="PDF uploaded."
+#     )
+
+#     # -----------------------------
+#     # Process PDF
+#     # -----------------------------
+
+#     processor = PDFProcessor()
+
+#     chunks = processor.process(str(file_path))
+
+#     progress.progress(
+#         50,
+#         text=f"{len(chunks)} chunks created."
+#     )
+
+#     # -----------------------------
+#     # Update FAISS
+#     # -----------------------------
+
+#     indexer = IndexUpdater()
+
+#     added = indexer.update(chunks)
+
+#     progress.progress(
+#         75,
+#         text=f"{added} chunks indexed."
+#     )
+
+#     # -----------------------------
+#     # Reload RAG Engine
+#     # -----------------------------
+
+#     st.session_state.rag = RAGEngine()
+
+#     progress.progress(
+#         100,
+#         text="Knowledge Base Updated!"
+#     )
+
+#     st.sidebar.success(
+#         "🎉 PDF is ready for querying."
+#     )
+
+#     st.session_state.last_uploaded = uploaded_pdf.name
+
+
 if (uploaded_pdf is not None
     and uploaded_pdf.name != st.session_state.last_uploaded):
 
-    progress = st.sidebar.progress(
-        0,
-        text="Uploading PDF..."
-    )
-
-    # -----------------------------
-    # Save PDF
-    # -----------------------------
-
     uploader = PDFUploader()
 
-    file_path = uploader.save(uploaded_pdf)
-
-    progress.progress(
-        25,
-        text="PDF uploaded."
-    )
-
     # -----------------------------
-    # Process PDF
+    # Calculate File Hash
     # -----------------------------
 
-    processor = PDFProcessor()
-
-    chunks = processor.process(str(file_path))
-
-    progress.progress(
-        50,
-        text=f"{len(chunks)} chunks created."
-    )
+    file_hash = uploader.get_hash(uploaded_pdf)
 
     # -----------------------------
-    # Update FAISS
+    # Check Duplicate
     # -----------------------------
 
-    indexer = IndexUpdater()
+    if uploader.is_indexed(file_hash):
 
-    added = indexer.update(chunks)
+        st.sidebar.warning(
+            "⚠️ This PDF has already been indexed."
+        )
 
-    progress.progress(
-        75,
-        text=f"{added} chunks indexed."
-    )
+        st.session_state.last_uploaded = uploaded_pdf.name
 
-    # -----------------------------
-    # Reload RAG Engine
-    # -----------------------------
+    else:
 
-    st.session_state.rag = RAGEngine()
+        progress = st.sidebar.progress(
+            0,
+            text="Uploading PDF..."
+        )
 
-    progress.progress(
-        100,
-        text="Knowledge Base Updated!"
-    )
+        # -----------------------------
+        # Save PDF
+        # -----------------------------
 
-    st.sidebar.success(
-        "🎉 PDF is ready for querying."
-    )
+        file_path = uploader.save(uploaded_pdf)
 
-    st.session_state.last_uploaded = uploaded_pdf.name
+        progress.progress(
+            25,
+            text="PDF uploaded."
+        )
+
+        # -----------------------------
+        # Process PDF
+        # -----------------------------
+
+        processor = PDFProcessor()
+
+        chunks = processor.process(str(file_path))
+
+        progress.progress(
+            50,
+            text=f"{len(chunks)} chunks created."
+        )
+
+        # -----------------------------
+        # Update FAISS
+        # -----------------------------
+
+        indexer = IndexUpdater()
+
+        added = indexer.update(chunks)
+
+        progress.progress(
+            75,
+            text=f"{added} chunks indexed."
+        )
+
+        # -----------------------------
+        # Mark PDF as Indexed
+        # -----------------------------
+
+        uploader.mark_indexed(
+            uploaded_pdf.name,
+            file_hash
+        )
+
+        # -----------------------------
+        # Reload RAG Engine
+        # -----------------------------
+
+        st.session_state.rag = RAGEngine()
+
+        progress.progress(
+            100,
+            text="Knowledge Base Updated!"
+        )
+
+        st.sidebar.success(
+            "🎉 PDF is ready for querying."
+        )
+
+        st.session_state.last_uploaded = uploaded_pdf.name
 
 # ---------------------------------------------------------
 # Header
@@ -218,9 +312,15 @@ if question:
 
         with st.spinner("Searching aviation reports..."):
 
+            # answer, results = st.session_state.rag.ask(
+            #     question=question,
+            #     scope=search_scope
+            # )
+
             answer, results = st.session_state.rag.ask(
                 question=question,
-                scope=search_scope
+                scope=search_scope,
+                top_k=top_k
             )
 
         st.markdown(answer)

@@ -33,10 +33,11 @@ class RAGEngine:
     def __init__(self):
         self.workflow = AeroWorkflow()
 
-    def ask(self, question: str, scope="Both"):
+    def ask(self, question: str, scope="Both", top_k=5):
         state = {
             "question": question,
             "scope": scope,
+            "top_k": top_k,
             "route": "",
             "answer": "",
             "documents": []
