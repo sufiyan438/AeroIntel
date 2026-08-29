@@ -41,13 +41,13 @@ class AeroWorkflow:
         self.app = self.workflow.compile()
 
 
-        def route_node(self, state: GraphState):
-            route = self.router.route(
-                question=state["question"],
-                scope=state["scope"]
-            )
-            state["route"] = route
-            return state
+    def route_node(self, state: GraphState):
+        route = self.router.route(
+            question=state["question"],
+            scope=state["scope"]
+        )
+        state["route"] = route
+        return state
 
-        def route_decision(self, state: GraphState):
-            return state["route"]
+    def route_decision(self, state: GraphState):
+        return state["route"]

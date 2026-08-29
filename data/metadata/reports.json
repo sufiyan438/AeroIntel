@@ -1,0 +1,30 @@
+[
+  {
+    "report_id": "AIR2504",
+    "title": "In-Flight Separation of Left Mid Exit Door Plug",
+    "airline": "Alaska Airlines",
+    "aircraft": "Boeing 737-9",
+    "registration": "N704AL",
+    "keywords": [
+      "door plug",
+      "rapid depressurization",
+      "flight 1282"
+    ],
+    "pdf": "AIR2504.pdf"
+  },
+  {
+    "report_id": "AIR2602",
+    "title": "Midair Collision Over the Potomac River",
+    "airline": null,
+    "aircraft": [
+      "CRJ700",
+      "UH-60"
+    ],
+    "keywords": [
+      "midair collision",
+      "Washington DC",
+      "Potomac"
+    ],
+    "pdf": "AIR2602.pdf"
+  }
+]

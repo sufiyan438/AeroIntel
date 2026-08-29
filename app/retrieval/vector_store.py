@@ -27,7 +27,7 @@ class VectorStore:
         return FAISS.load_local(path, self.embedding, allow_dangerous_deserialization=True)
 
     def load_aviation(self):
-        self.load(self.aviation_path)
+        return self.load(self.aviation_path)
 
     def load_uploaded(self):
         index_file = Path(self.upload_path) / "index.faiss"

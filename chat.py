@@ -22,7 +22,7 @@ def print_sources(results):
         key = (source, page)
         if key not in seen:
             seen.add(key)
-            if source is None:
+            if score is None:
                 print(f"• {source} (Page {page}) | Retrieval: MMR")
             else:
                 print(f"• {source} (Page {page}) | Similarity Score: {score:.4f}")

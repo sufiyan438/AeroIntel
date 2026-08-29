@@ -11,7 +11,7 @@ class IndexBuilder:
 
     def build(self, data_folder="data/raw"):
         documents = []
-        pdf_files = (Path(data_folder).rglob("*.pdf"))
+        pdf_files = list(Path(data_folder).rglob("*.pdf"))
         print(f"Found {len(pdf_files)} PDF(s).")
 
         for pdf in pdf_files:

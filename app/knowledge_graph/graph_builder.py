@@ -58,7 +58,7 @@ class GraphBuilder:
             for plane in aircraft:
                 self.db.execute(
                     """
-                    MERGE (a:Airline {name:$name})
+                    MERGE (a:Aircraft {name:$name})
                     WITH a
                     MATCH (r:Report {id:$id})
                     MERGE (r)-[:INVOLVES]->(a)
@@ -76,7 +76,7 @@ class GraphBuilder:
                 MERGE (k:Keyword {name:$name})
                 WITH k
                 MATCH (r:Report {id:$id})
-                MERGE (r)-[:HAS_KEYWORD]->{k}
+                MERGE (r)-[:HAS_KEYWORD]->(k)
                 """,
                 {
                     "name": keyword,
