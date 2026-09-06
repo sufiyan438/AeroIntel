@@ -1,0 +1,18 @@
+[
+  {
+    "question": "Which airline is associated with AIR2504?",
+    "reference": "Alaska Airlines"
+  },
+  {
+    "question": "Which aircraft were involved in AIR2602?",
+    "reference": "CRJ700 and UH-60"
+  },
+  {
+    "question": "What keywords are associated with AIR2504?",
+    "reference": "door plug, rapid depressurization, flight 1282"
+  },
+  {
+    "question": "What was the probable cause of the accident described in AIR-24-07?",
+    "reference": "The probable cause was the air boss's and air show event organizer's lack of an adequate, prebriefed aircraft separation plan, relying instead on real-time deconfliction directives and the see-and-avoid strategy, which allowed the Boeing B-17G and Bell P-63F to lose separation. Also causal was the pilots' diminished ability to see and avoid each other due to flight path geometry, aircraft structure obscuration, attention demands, and limitations of human performance."
+  }
+]

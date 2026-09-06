@@ -14,32 +14,6 @@ class WorkflowNodes:
         self.graph = GraphQuery()
 
 
-    # def vector_node(self, state):
-    #     question = state["question"]
-    #     scope = state["scope"]
-    #     results = self.retriever.retrieve(
-    #         query=question,
-    #         scope=scope
-    #     )
-
-    #     docs = [doc for doc, score in results]
-
-    #     context = "\n\n".join(
-    #         doc.page_content
-    #         for doc in docs
-    #     )
-
-    #     prompt = PromptBuilder.build(
-    #         context=context,
-    #         question=question
-    #     )
-
-    #     response = self.llm.invoke(prompt)
-    #     state["answer"] = response.content
-    #     state["documents"] = results
-
-    #     return state
-
     def vector_node(self, state):
         question = state["question"]
         scope = state["scope"]
@@ -50,13 +24,7 @@ class WorkflowNodes:
             scope=scope,
             k=top_k
         )
-
         docs = [doc for doc, score in results]
-
-        # context = "\n\n".join(
-        #     doc.page_content
-        #     for doc in docs
-        # )
 
         context = "\n\n".join(
     f"""
@@ -72,14 +40,12 @@ Page: {doc.metadata.get("page", 0) + 1}]
             context=context,
             question=question
         )
-
         response = self.llm.invoke(prompt)
 
         state["answer"] = response.content
         state["documents"] = results
 
         return state
-
 
 
 
@@ -108,10 +74,10 @@ Page: {doc.metadata.get("page", 0) + 1}]
 
 
 
-
     def graph_node(self, state):
         question = state["question"]
         answer = self.graph.query(question)
+        
         state["answer"] = answer
         state["documents"] = []
         return state

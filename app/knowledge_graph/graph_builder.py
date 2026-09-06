@@ -6,6 +6,8 @@ class GraphBuilder:
     def __init__(self):
         self.db = Neo4jService()
 
+
+    #Builds neo4j graph using reports.json
     def build(self, metadata_path):
         with open(metadata_path, "r", encoding="utf-8") as f:
             reports = json.load(f)

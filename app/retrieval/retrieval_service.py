@@ -127,7 +127,7 @@ class RetrievalService:
             upload_k = 0
 
         # -------------------------------------------------
-        # Aviation Database
+        # Aviation Database = Metadata + vector MMR
         # -------------------------------------------------
 
         best_match = self.metadata_service.get_best_match(query)

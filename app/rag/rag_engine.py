@@ -26,6 +26,7 @@
 
 
 from app.langgraph.workflow import AeroWorkflow
+from app.config.settings import TOP_K
 
 
 class RAGEngine:
@@ -33,7 +34,7 @@ class RAGEngine:
     def __init__(self):
         self.workflow = AeroWorkflow()
 
-    def ask(self, question: str, scope="Both", top_k=5):
+    def ask(self, question: str, scope="Both", top_k=TOP_K):
         state = {
             "question": question,
             "scope": scope,
