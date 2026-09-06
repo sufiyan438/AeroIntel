@@ -13,18 +13,44 @@
     "pdf": "AIR2504.pdf"
   },
   {
-    "report_id": "AIR2602",
-    "title": "Midair Collision Over the Potomac River",
-    "airline": null,
-    "aircraft": [
-      "CRJ700",
-      "UH-60"
-    ],
-    "keywords": [
-      "midair collision",
-      "Washington DC",
-      "Potomac"
-    ],
-    "pdf": "AIR2602.pdf"
-  }
+  "report_id": "AIR2602",
+  "title": "Midair Collision Over the Potomac River",
+  "airline": null,
+  "aircraft": [
+    "CRJ700",
+    "UH-60"
+  ],
+  "location": "Washington, DC",
+  "causes": [
+    "Helicopter route placed too close to runway approach path",
+    "Failure to regularly review and evaluate helicopter routes",
+    "Overreliance on visual separation"
+  ],
+  "safety_issues": [
+    "Fragmented safety data sharing",
+    "Incomplete safety management system implementation",
+    "Failure to act on previous NTSB recommendations"
+  ],
+  "recommendations": [
+    {
+      "text": "Improve safety management and risk identification for helicopter operations near DCA",
+      "directed_to": [
+        "Federal Aviation Administration"
+      ]
+    },
+    {
+      "text": "Improve safety data sharing and integration among aviation stakeholders",
+      "directed_to": [
+        "Federal Aviation Administration",
+        "US Army"
+      ]
+    }
+  ],
+  "keywords": [
+    "midair collision",
+    "Washington DC",
+    "Potomac"
+  ],
+  "pdf": "AIR2602.pdf"
+}
 ]

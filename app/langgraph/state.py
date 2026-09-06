@@ -8,3 +8,4 @@ class GraphState(TypedDict):
     # documents: str
     top_k: int
     documents:list
+    graph_evidence: list

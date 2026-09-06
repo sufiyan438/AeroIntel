@@ -1,56 +1,3 @@
-# class QueryRouter:
-#     """
-#     Decides where a query should be routed.
-
-#     Routes:
-#     - metadata
-#     - vector
-#     - graph
-#     """
-
-#     def __init__(self):
-#         self.metadata_keywords = [
-#             "page",
-#             "pages",
-#             "title",
-#             "author",
-#             "created",
-#             "date",
-#             "filename",
-#             "report id",
-#             "pdf"
-#         ]
-
-#         self.graph_keywords = [
-#             "relationship",
-#             "related",
-#             "airline",
-#             "aircraft",
-#             "manufacturer",
-#             "airport",
-#             "operator",
-#             "compare",
-#             "connection",
-#             "linked"
-#         ]
-
-#     def route(self, question: str, scope: str):
-#         question = question.lower()
-        
-#         if scope == "Uploaded Documents":
-#             return "vector"
-
-#         #Metadata route
-#         if any(word in question for word in self.metadata_keywords):
-#             return "metadata"
-
-#         #Knowledge graph route
-#         if any (word in question for word in self.graph_keywords):
-#             return "graph"
-
-#         #Default Vector search
-#         return "vector"
-
 import re
 
 
@@ -79,19 +26,18 @@ class QueryRouter:
         ]
 
         self.graph_patterns = [
-
-            # Report -> Airline
+            # Existing patterns
             r"\b(what|which)\s+airline\b.*\b(associated|related|operated|linked)\b",
-
-            # Report -> Aircraft / Airline -> Aircraft
             r"\b(what|which)\s+aircraft\b.*\b(associated|involved|related|linked)\b",
-
-            # Report -> Keywords
             r"\b(what|which)\s+keywords?\b.*\b(associated|related|linked)\b",
+            r"\b(what|which)\s+reports?\b.*\b(associated|involve|involves|related|linked)\b",
 
-            # Airline/Aircraft -> Report
-            r"\b(what|which)\s+reports?\b.*\b(associated|involve|involves|related|linked)\b"
-        ]
+            # Rich knowledge graph relationships
+            r"\b(what|which)\b.*\b(cause|causes|caused)\b.*\bair\d+\b",
+            r"\b(what|which)\b.*\bsafety issues?\b.*\bair\d+\b",
+            r"\b(what|which)\b.*\brecommendations?\b.*\bair\d+\b",
+            r"\bwhere\b.*\bair\d+\b.*\boccur(?:red)?\b",
+    ]
 
     def route(self, question: str, scope: str):
 
@@ -110,6 +56,11 @@ class QueryRouter:
             for keyword in self.metadata_keywords
         ):
             return "metadata"
+
+        # Probable cause should come from the source document,
+        # not the summarized Cause nodes in Neo4j.
+        if "probable cause" in question:
+            return "vector"
 
         # -----------------------------
         # Graph Route

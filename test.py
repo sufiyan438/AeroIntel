@@ -1,84 +1,33 @@
-# from app.langgraph.router import QueryRouter
+from app.langgraph.workflow import AeroWorkflow
 
-# router = QueryRouter()
+workflow = AeroWorkflow()
 
-# questions = [
-#     "What airline is associated with AIR2504?",
-#     "What aircraft is involved in AIR2602?",
-#     "Which aircraft is associated with Alaska Airlines?",
-#     "Which reports involve CRJ700?",
-#     "What caused the aircraft to crash?",
-#     "Compare the causes of AIR2504 and AIR2602.",
-#     "What is the title of AIR2504?",
-#     "Where did the collision happen?"
-# ]
-
-# for question in questions:
-#     route = router.route(
-#         question,
-#         scope="Aviation Database"
-#     )
-
-#     print(f"{question}")
-#     print(f"-> {route}\n")
-
-
-# from app.retrieval.vector_store import VectorStore
-
-# store = VectorStore()
-# db = store.load_uploaded()
-
-# query = "What was the probable cause of the AIR-24-07 air show collision?"
-
-# print("\n--- MMR ---")
-
-# mmr_docs = db.max_marginal_relevance_search(
-#     query=query,
-#     k=5,
-#     fetch_k=40,
-#     lambda_mult=0.85
-# )
-
-# for doc in mmr_docs:
-#     print(
-#         doc.metadata.get("source"),
-#         "Page:",
-#         doc.metadata.get("page")
-#     )
-
-
-# print("\n--- SIMILARITY SEARCH ---")
-
-# similarity_docs = db.similarity_search(
-#     query=query,
-#     k=5
-# )
-
-# for doc in similarity_docs:
-#     print(
-#         doc.metadata.get("source"),
-#         "Page:",
-#         doc.metadata.get("page")
-#     )
-
-from app.retrieval.retrieval_service import RetrievalService
-
-retriever = RetrievalService()
-
-print("\n--- Uploaded Documents ---")
-results = retriever.retrieve(
-    query="What caused the accident?",
-    scope="Uploaded Documents",
-    k=5
+question = (
+    "What aircraft were involved in AIR2602 "
+    "and what safety issues contributed to the accident?"
 )
 
-print("Results:", len(results))
+state = {
+    "question": question,
+    "scope": "Aviation Database",
+    "route": "",
+    "answer": "",
+    "top_k": 5,
+    "documents": [],
+    "graph_evidence": []
+}
 
-print("\n--- Both ---")
-results = retriever.retrieve(
-    query="What caused the accident?",
-    scope="Both",
-    k=5
-)
+result = workflow.app.invoke(state)
 
-print("Results:", len(results))
+print("\nROUTE:")
+print(result["route"])
+
+print("\nGRAPH EVIDENCE:")
+for item in result.get("graph_evidence", []):
+    print(item)
+
+print("\nDOCUMENTS RETRIEVED:")
+print(len(result.get("documents", [])))
+
+print("\nANSWER:")
+print(result["answer"])

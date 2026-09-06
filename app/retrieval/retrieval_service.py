@@ -1,5 +1,7 @@
 import os
 
+from sentence_transformers import CrossEncoder
+
 from app.retrieval.vector_store import VectorStore
 from app.retrieval.metadata_service import MetadataService
 from app.config.settings import TOP_K, FETCH_K, MMR_LAMBDA
@@ -25,67 +27,30 @@ class RetrievalService:
         self.aviation_db = self.vector_store.load_aviation()
         self.upload_db = self.vector_store.load_uploaded()
         self.metadata_service = MetadataService()
-
-#     def retrieve(self, query, scope="Aviation Database", k=TOP_K):
-#         print("\nSearching vector database...")
-
-#         if scope == "Uploaded Documents":
-#             docs = self.upload_db.max_marginal_relevance_search(query=query, 
-#                                                                 k=k, fetch_k=20, 
-#                                                                 lambda_mult=0.7)
-#             print(f"\nRetrieved {len(docs)} uploaded chunks.")
-#             return [(doc, None) for doc in docs]
+        self.reranker = CrossEncoder("BAAI/bge-reranker-base")
 
 
-#         #Aviation Database
-#         best_match = self.metadata_service.get_best_match(query)
-#         expanded_query = query
+    def rerank(self, query, docs, top_k):
+        if not docs:
+            return []
 
-#         if best_match:
-#             print("\nMetadata Filter Applied:")
-#             print(f"• {best_match['report_id']}")
+        pairs = [
+            [query, doc.page_content]
+            for doc in docs
+        ]
 
-#             expanded_query = f"""
-# Title:
-# {best_match['title']}
+        scores = self.reranker.predict(pairs)
 
-# Airline:
-# {best_match['airline']}
+        ranked = sorted(
+            zip(docs, scores),
+            key=lambda item: item[1],
+            reverse=True
+        )
 
-# Aircraft:
-# {best_match['aircraft']}
+        return ranked[:top_k]
 
-# Keywords:
-# {' '.join(best_match['keywords'])}
 
-# Question:
-# {query}
-# """
 
-#         docs = self.aviation_db.max_marginal_relevance_search(query=expanded_query,
-#                                                               k=k, fetch_k=20,
-#                                                               lambda_mult=0.7)
-#         filtered_docs = docs
-
-#         #if specific report found, then discard filtered_docs
-#         if best_match:
-#             filtered_docs = []
-
-#             for doc in docs:
-#                 filename = os.path.basename(doc.metadata.get("source", ""))
-
-#                 if filename == best_match["pdf"]:
-#                     filtered_docs.append(doc)
-
-#         if scope == "Both":
-#             upload_docs = self.upload_db.max_marginal_relevance_search(query=query,
-#                                                                        k=k, fetch_k=20,
-#                                                                        lambda_mult=0.7)
-#             filtered_docs.extend(upload_docs)
-
-#         print(f"\nRetrieved {len(filtered_docs)} chunks.")
-
-#         return [(doc, None) for doc in filtered_docs[:k]]   
 
     def retrieve(self, query, scope="Aviation Database", k=TOP_K):
 
@@ -156,31 +121,48 @@ Question:
 {query}
 """
 
-        aviation_docs = self.aviation_db.max_marginal_relevance_search(
+        # -------------------------------------------------
+        # Retrieve larger candidate pool
+        # -------------------------------------------------
+
+        candidate_docs = self.aviation_db.similarity_search(
             query=expanded_query,
-            k=aviation_k,
-            fetch_k=FETCH_K,
-            lambda_mult=MMR_LAMBDA
+            k=FETCH_K
         )
 
         # -------------------------------------------------
-        # Filter Aviation Results
+        # Filter to matched aviation report
         # -------------------------------------------------
-
-        filtered_aviation_docs = aviation_docs
 
         if best_match:
 
-            filtered_aviation_docs = []
-
-            for doc in aviation_docs:
-
-                filename = os.path.basename(
+            candidate_docs = [
+                doc
+                for doc in candidate_docs
+                if os.path.basename(
                     doc.metadata.get("source", "")
-                )
+                ) == best_match["pdf"]
+            ]
 
-                if filename == best_match["pdf"]:
-                    filtered_aviation_docs.append(doc)
+        # -------------------------------------------------
+        # Rerank investigation-oriented queries
+        # -------------------------------------------------
+
+        reranked_docs = self.rerank(
+            query=query,
+            docs=candidate_docs,
+            top_k=aviation_k
+        )
+
+        filtered_aviation_docs = [
+            doc
+            for doc, score in reranked_docs
+        ]
+
+
+
+
+
 
         # -------------------------------------------------
         # Aviation Database Only
@@ -192,10 +174,12 @@ Question:
                 f"\nRetrieved {len(filtered_aviation_docs)} aviation chunks."
             )
 
-            return [
-                (doc, None)
-                for doc in filtered_aviation_docs[:k]
-            ]
+            # return [
+            #     (doc, None)
+            #     for doc in filtered_aviation_docs[:k]
+            # ]
+
+            return reranked_docs[:k]
 
         # -------------------------------------------------
         # Both
@@ -234,3 +218,53 @@ Question:
             (doc, None)
             for doc in combined_docs[:k]
         ]
+
+
+
+    def _rerank_investigation_chunks(self, docs, query):
+        query_lower = query.lower()
+
+        investigation_terms = [
+            "finding",
+            "findings",
+            "probable cause",
+            "safety issue",
+            "safety issues",
+            "recommendation",
+            "recommendations",
+            "conclusion",
+            "conclusions",
+            "limitations",
+            "shortcomings",
+            "contributing",
+            "contributed",
+        ]
+
+        wants_investigation_findings = any(
+            term in query_lower
+            for term in [
+                "finding",
+                "findings",
+                "probable cause",
+                "safety issue",
+                "recommendation",
+                "conclusion",
+            ]
+        )
+
+        if not wants_investigation_findings:
+            return docs
+
+        def score(doc):
+            text = doc.page_content.lower()
+
+            return sum(
+                text.count(term)
+                for term in investigation_terms
+            )
+
+        return sorted(
+            docs,
+            key=score,
+            reverse=True
+        )

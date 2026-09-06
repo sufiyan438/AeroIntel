@@ -24,6 +24,11 @@ class GraphBuilder:
         aircraft = report.get("aircraft")
         keywords = report.get("keywords", [])
 
+        location = report.get("location")
+        causes = report.get("causes", [])
+        safety_issues = report.get("safety_issues", [])
+        recommendations = report.get("recommendations", [])
+
         #Report node
         self.db.execute(
             """
@@ -85,3 +90,86 @@ class GraphBuilder:
                     "id": report_id
                 }
             )
+
+
+
+
+
+        # Location
+        if location:
+            self.db.execute(
+                """
+                MERGE (l:Location {name:$name})
+                WITH l
+                MATCH (r:Report {id:$id})
+                MERGE (r)-[:OCCURRED_AT]->(l)
+                """,
+                {
+                    "name": location,
+                    "id": report_id
+                }
+            )
+
+
+        # Causes
+        for cause in causes:
+            self.db.execute(
+                """
+                MERGE (c:Cause {name:$name})
+                WITH c
+                MATCH (r:Report {id:$id})
+                MERGE (r)-[:HAS_CAUSE]->(c)
+                """,
+                {
+                    "name": cause,
+                    "id": report_id
+                }
+            )
+
+
+        # Safety Issues
+        for issue in safety_issues:
+            self.db.execute(
+                """
+                MERGE (s:SafetyIssue {name:$name})
+                WITH s
+                MATCH (r:Report {id:$id})
+                MERGE (r)-[:HAS_SAFETY_ISSUE]->(s)
+                """,
+                {
+                    "name": issue,
+                    "id": report_id
+                }
+            )
+
+
+        # Recommendations
+        for recommendation in recommendations:
+            recommendation_text = recommendation["text"]
+
+            self.db.execute(
+                """
+                MERGE (rec:Recommendation {text:$text})
+                WITH rec
+                MATCH (r:Report {id:$id})
+                MERGE (r)-[:HAS_RECOMMENDATION]->(rec)
+                """,
+                {
+                    "text": recommendation_text,
+                    "id": report_id
+                }
+            )
+
+            for organization in recommendation.get("directed_to", []):
+                self.db.execute(
+                    """
+                    MERGE (o:Organization {name:$organization})
+                    WITH o
+                    MATCH (rec:Recommendation {text:$text})
+                    MERGE (rec)-[:DIRECTED_TO]->(o)
+                    """,
+                    {
+                        "organization": organization,
+                        "text": recommendation_text
+                    }
+                )

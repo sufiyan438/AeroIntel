@@ -18,7 +18,8 @@ class AeroWorkflow:
         self.workflow.add_node("router", self.route_node)
         self.workflow.add_node("metadata", self.nodes.metadata_node)
         self.workflow.add_node("vector", self.nodes.vector_node)
-        self.workflow.add_node("graph", self.nodes.graph_node)
+        # self.workflow.add_node("graph", self.nodes.graph_node)
+        self.workflow.add_node("graph", self.nodes.graph_rag_node)
 
         #Entry point
         self.workflow.set_entry_point("router")

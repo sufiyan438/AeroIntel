@@ -81,3 +81,89 @@ Page: {doc.metadata.get("page", 0) + 1}]
         state["answer"] = answer
         state["documents"] = []
         return state
+
+
+
+
+    def graph_rag_node(self, state):
+        question = state["question"]
+        scope = state["scope"]
+        top_k = state["top_k"]
+
+        # 1. Retrieve structured evidence from Neo4j
+        graph_evidence = self.graph.retrieve_evidence(question)
+        graph_context = self.graph.format_evidence(graph_evidence)
+
+        # 2. Check whether the question contains a semantic part
+        # that still needs vector retrieval.
+        vector_query = self.graph.get_vector_query(question)
+
+        is_hybrid_query = (
+            vector_query.strip().lower()
+            != question.strip().lower()
+        )
+
+        # -----------------------------------------------------
+        # PURE GRAPH QUERY
+        # Neo4j already contains enough evidence.
+        # Skip FAISS + reranker.
+        # -----------------------------------------------------
+        if graph_evidence and not is_hybrid_query:
+
+            print("\nPure Graph Query - skipping vector retrieval")
+
+            combined_context = f"""
+    Knowledge Graph Evidence:
+    {graph_context}
+    """
+
+            results = []
+
+        # -----------------------------------------------------
+        # HYBRID GRAPHRAG QUERY
+        # Combine Neo4j + vector evidence.
+        # -----------------------------------------------------
+        else:
+
+            print("\nGraphRAG Vector Query:")
+            print(vector_query)
+
+            results = self.retriever.retrieve(
+                query=vector_query,
+                scope=scope,
+                k=top_k
+            )
+
+            docs = [doc for doc, score in results]
+
+            vector_context = "\n\n".join(
+                f"""
+    [Source: {os.path.basename(doc.metadata.get("source", "Unknown"))},
+    Page: {doc.metadata.get("page", 0) + 1}]
+
+    {doc.page_content}
+    """
+                for doc in docs
+            )
+
+            combined_context = f"""
+    Knowledge Graph Evidence:
+    {graph_context}
+
+    Document Evidence:
+    {vector_context}
+    """
+
+        # 3. Generate the grounded final answer
+        prompt = PromptBuilder.build(
+            context=combined_context,
+            question=question
+        )
+
+        response = self.llm.invoke(prompt)
+
+        state["answer"] = response.content
+        state["documents"] = results
+        state["graph_evidence"] = graph_evidence
+
+        return state
