@@ -86,31 +86,22 @@ Page: {doc.metadata.get("page", 0) + 1}]
 
 
     def graph_rag_node(self, state):
+
         question = state["question"]
         scope = state["scope"]
         top_k = state["top_k"]
+        route = state["route"]
 
         # 1. Retrieve structured evidence from Neo4j
         graph_evidence = self.graph.retrieve_evidence(question)
         graph_context = self.graph.format_evidence(graph_evidence)
 
-        # 2. Check whether the question contains a semantic part
-        # that still needs vector retrieval.
-        vector_query = self.graph.get_vector_query(question)
+        # --------------------------------------------------
+        # PURE GRAPH ROUTE
+        # --------------------------------------------------
+        if route == "graph":
 
-        is_hybrid_query = (
-            vector_query.strip().lower()
-            != question.strip().lower()
-        )
-
-        # -----------------------------------------------------
-        # PURE GRAPH QUERY
-        # Neo4j already contains enough evidence.
-        # Skip FAISS + reranker.
-        # -----------------------------------------------------
-        if graph_evidence and not is_hybrid_query:
-
-            print("\nPure Graph Query - skipping vector retrieval")
+            print("\nAgent selected PURE GRAPH retrieval")
 
             combined_context = f"""
     Knowledge Graph Evidence:
@@ -119,13 +110,18 @@ Page: {doc.metadata.get("page", 0) + 1}]
 
             results = []
 
-        # -----------------------------------------------------
-        # HYBRID GRAPHRAG QUERY
-        # Combine Neo4j + vector evidence.
-        # -----------------------------------------------------
-        else:
+        # --------------------------------------------------
+        # HYBRID ROUTE
+        # --------------------------------------------------
+        elif route == "hybrid":
 
-            print("\nGraphRAG Vector Query:")
+            print("\nAgent selected HYBRID retrieval")
+
+            # Extract the semantic portion of the question
+            # for vector retrieval
+            vector_query = self.graph.get_vector_query(question)
+
+            print("GraphRAG Vector Query:")
             print(vector_query)
 
             results = self.retriever.retrieve(
@@ -154,7 +150,12 @@ Page: {doc.metadata.get("page", 0) + 1}]
     {vector_context}
     """
 
-        # 3. Generate the grounded final answer
+        else:
+            raise ValueError(
+                f"graph_rag_node received unsupported route: {route}"
+            )
+
+        # 3. Generate grounded answer
         prompt = PromptBuilder.build(
             context=combined_context,
             question=question

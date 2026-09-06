@@ -1,11 +1,22 @@
 from typing import TypedDict
 
+
 class GraphState(TypedDict):
+
     question: str
     scope: str
+
+    # Retrieval strategy selected by the planner
     route: str
+
     answer: str
-    # documents: str
     top_k: int
-    documents:list
+
+    # Retrieved evidence
+    documents: list
     graph_evidence: list
+
+    # Agentic workflow fields
+    evidence_sufficient: bool
+    retry_count: int
+    recovery_action: str
