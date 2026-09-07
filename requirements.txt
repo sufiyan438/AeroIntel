@@ -42,3 +42,4 @@ pandas
 numpy
 python-dotenv
 pydantic
+rank-bm25

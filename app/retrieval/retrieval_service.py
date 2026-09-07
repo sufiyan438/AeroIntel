@@ -1,6 +1,7 @@
 import os
 
 from sentence_transformers import CrossEncoder
+from rank_bm25 import BM25Okapi
 
 from app.retrieval.vector_store import VectorStore
 from app.retrieval.metadata_service import MetadataService
@@ -28,6 +29,21 @@ class RetrievalService:
         self.upload_db = self.vector_store.load_uploaded()
         self.metadata_service = MetadataService()
         self.reranker = CrossEncoder("BAAI/bge-reranker-base")
+
+        self.bm25_docs = []
+        self.bm25 = None
+
+        if self.aviation_db is not None:
+            self.bm25_docs = list(
+                self.aviation_db.docstore._dict.values()
+            )
+
+            tokenized_corpus = [
+                doc.page_content.lower().split()
+                for doc in self.bm25_docs
+            ]
+
+            self.bm25 = BM25Okapi(tokenized_corpus)
 
 
     def rerank(self, query, docs, top_k):
@@ -125,10 +141,68 @@ Question:
         # Retrieve larger candidate pool
         # -------------------------------------------------
 
-        candidate_docs = self.aviation_db.similarity_search(
+        # candidate_docs = self.aviation_db.max_marginal_relevance_search(
+        #     query=expanded_query,
+        #     k=FETCH_K,
+        #     fetch_k=FETCH_K * 2,
+        #     lambda_mult=MMR_LAMBDA
+        # )
+
+
+        # -------------------------------------------------
+        # Dense retrieval using FAISS + MMR
+        # -------------------------------------------------
+
+        dense_docs = self.aviation_db.max_marginal_relevance_search(
             query=expanded_query,
+            k=FETCH_K,
+            fetch_k=FETCH_K * 2,
+            lambda_mult=MMR_LAMBDA
+        )
+
+        # -------------------------------------------------
+        # Sparse retrieval using BM25
+        # -------------------------------------------------
+
+        bm25_docs = self.bm25_search(
+            query=query,
             k=FETCH_K
         )
+
+        print(
+            f"\nHybrid candidates: "
+            f"{len(dense_docs)} dense/MMR + "
+            f"{len(bm25_docs)} BM25"
+        )
+
+        # -------------------------------------------------
+        # Merge and deduplicate hybrid candidates
+        # -------------------------------------------------
+
+        candidate_docs = []
+
+        seen = set()
+
+        for doc in dense_docs + bm25_docs:
+
+            key = (
+                doc.metadata.get("source"),
+                doc.metadata.get("page"),
+                doc.page_content
+            )
+
+            if key not in seen:
+                seen.add(key)
+                candidate_docs.append(doc)
+
+
+        print(
+            f"Hybrid candidates after deduplication: "
+            f"{len(candidate_docs)}"
+        )
+
+
+
 
         # -------------------------------------------------
         # Filter to matched aviation report
@@ -268,3 +342,27 @@ Question:
             key=score,
             reverse=True
         )
+
+
+
+
+
+    def bm25_search(self, query, k=FETCH_K):
+        if self.bm25 is None:
+            return []
+
+        tokenized_query = query.lower().split()
+
+        scores = self.bm25.get_scores(tokenized_query)
+
+        ranked_indices = sorted(
+            range(len(scores)),
+            key=lambda i: scores[i],
+            reverse=True
+        )
+
+        return [
+            self.bm25_docs[i]
+            for i in ranked_indices[:k]
+            if scores[i] > 0
+        ]
