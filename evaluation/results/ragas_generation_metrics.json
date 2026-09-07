@@ -1,0 +1,10 @@
+{
+  "summary": {
+    "completed_questions": 0,
+    "faithfulness_evaluated": 0,
+    "answer_relevancy_evaluated": 0,
+    "average_faithfulness": null,
+    "average_answer_relevancy": null
+  },
+  "results": []
+}

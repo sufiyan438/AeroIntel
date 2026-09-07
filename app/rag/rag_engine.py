@@ -55,6 +55,7 @@
 
 
 
+from langchain_core.messages import ToolMessage
 
 from app.langgraph.tool_workflow import ToolAeroWorkflow
 from app.config.settings import TOP_K
@@ -84,13 +85,27 @@ class RAGEngine:
 
         result = self.workflow.app.invoke(state)
 
+        document_contexts = []
+
+        for message in result.get("messages", []):
+            if (
+                isinstance(message, ToolMessage)
+                and message.name == "search_documents"
+            ):
+                document_contexts.append(message.content)
+
 
         print(
             "\nTools used for this query:",
             result.get("executed_tools", []),
             flush=True
         )
+        # return (
+        #     result["answer"],
+        #     result.get("documents", [])
+        # )
+
         return (
             result["answer"],
-            result.get("documents", [])
+            document_contexts
         )

@@ -126,9 +126,10 @@ class AeroIntelTools:
             if not evidence:
                 return "No relevant knowledge graph evidence found."
 
-            return self.graph.format_evidence(evidence)
+            print("\nTool Executed: search_knowledge_graph")
+            
 
-        print("\nTool Executed: search_knowledge_graph")
+            return self.graph.format_evidence(evidence)
 
         return [
             search_metadata,

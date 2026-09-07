@@ -1,0 +1,167 @@
+[
+  {
+    "id": "eval_001",
+    "question": "What was the probable cause of the AIR2407 accident?",
+    "expected_report": "AIR2407.pdf",
+    "relevant_pages": [83],
+    "reference_answer": "The probable cause was the lack of an adequate prebriefed aircraft separation plan, reliance on real-time air boss deconfliction and see-and-avoid, and the diminished ability of the accident pilots to see and avoid the other aircraft.",
+    "category": "semantic"
+  },
+  {
+    "id": "eval_002",
+    "question": "What aircraft were involved in the AIR2407 collision?",
+    "expected_report": "AIR2407.pdf",
+    "relevant_pages": [60],
+    "reference_answer": "The collision involved a Boeing B-17G bomber and a Bell P-63F fighter.",
+    "category": "keyword"
+  },
+  {
+    "id": "eval_003",
+    "question": "What limitations of see-and-avoid were discussed in AIR2407?",
+    "expected_report": "AIR2407.pdf",
+    "relevant_pages": [60, 66],
+    "reference_answer": "The report discusses the inherent limitations of pilots relying on visual acquisition and see-and-avoid for maintaining separation between aircraft.",
+    "category": "semantic"
+  },
+  {
+    "id": "eval_004",
+    "question": "What did AIR2407 conclude about aircraft deconfliction during the air show?",
+    "expected_report": "AIR2407.pdf",
+    "relevant_pages": [81, 83],
+    "reference_answer": "The investigation found that the performance lacked an adequate prebriefed aircraft separation plan and relied on real-time air boss directives and see-and-avoid for deconfliction.",
+    "category": "investigation"
+  },
+
+  {
+    "id": "eval_005",
+    "question": "What happened to the mid exit door plug in AIR2504?",
+    "expected_report": "AIR2504.pdf",
+    "relevant_pages": [99],
+    "reference_answer": "The left mid exit door plug moved upward off its stop pads because four bolts intended to prevent its upward movement were missing.",
+    "category": "keyword"
+  },
+  {
+    "id": "eval_006",
+    "question": "What did AIR2504 find about Boeing's on-the-job training?",
+    "expected_report": "AIR2504.pdf",
+    "relevant_pages": [104],
+    "reference_answer": "Boeing's on-the-job training was unstructured, undocumented, and focused mainly on routine build tasks, reducing the likelihood that personnel could correctly perform less common tasks such as opening a mid exit door plug.",
+    "category": "semantic"
+  },
+  {
+    "id": "eval_007",
+    "question": "What workforce change-management problem was identified in AIR2504?",
+    "expected_report": "AIR2504.pdf",
+    "relevant_pages": [106, 107],
+    "reference_answer": "Boeing increased hiring as production increased but did not conduct an adequate change-management assessment of the risks associated with a workforce that had reduced manufacturing experience.",
+    "category": "semantic"
+  },
+  {
+    "id": "eval_008",
+    "question": "What evidence indicated that the four bolts on the AIR2504 door plug were missing?",
+    "expected_report": "AIR2504.pdf",
+    "relevant_pages": [99],
+    "reference_answer": "Investigators found an absence of bolt contact damage or deformation around the vertical movement arrestor and upper guide track bolt holes, indicating that the four bolts were missing before the plug moved upward.",
+    "category": "investigation"
+  },
+
+  {
+    "id": "eval_009",
+    "question": "What did AIR2602 say about TCAS traffic advisories?",
+    "expected_report": "AIR2602.pdf",
+    "relevant_pages": [61, 67],
+    "reference_answer": "TCAS provides traffic advisories and can display resolution advisories, but traffic advisories provide limited aural position information, requiring pilots to consult the cockpit display before directing their visual search.",
+    "category": "keyword"
+  },
+  {
+    "id": "eval_010",
+    "question": "What role did Helicopter Route 4 play in the AIR2602 accident?",
+    "expected_report": "AIR2602.pdf",
+    "relevant_pages": [22],
+    "reference_answer": "Helicopter Route 4 passed close to the runway 33 approach corridor at DCA, allowing the helicopter's path to converge with the descending passenger airplane.",
+    "category": "semantic"
+  },
+  {
+    "id": "eval_011",
+    "question": "What safety-management problems were identified in AIR2602?",
+    "expected_report": "AIR2602.pdf",
+    "relevant_pages": [25, 328, 329],
+    "reference_answer": "The investigation identified failures to proactively use safety data, incomplete integration of safety risk management into operations, inadequate identification and mitigation of hazards, and weaknesses in FAA and Army safety-management practices.",
+    "category": "investigation"
+  },
+  {
+    "id": "eval_012",
+    "question": "What recommendations did AIR2602 make to the FAA?",
+    "expected_report": "AIR2602.pdf",
+    "relevant_pages": [330],
+    "reference_answer": "The report issued new recommendations to the FAA including improved supervisory time-on-position limitations and scenario-based threat and error management training for air traffic controllers.",
+    "category": "investigation"
+  },
+
+  {
+    "id": "eval_013",
+    "question": "Which authorities implement the US-Canada aviation maintenance agreement described in AC 43-10C?",
+    "expected_report": "AC 43-10C.pdf",
+    "relevant_pages": [1],
+    "reference_answer": "The FAA acts as the executive agent for the United States and Transport Canada Civil Aviation acts as the executive agent for Canada.",
+    "category": "keyword"
+  },
+  {
+    "id": "eval_014",
+    "question": "What does MIP stand for in AC 43-10C?",
+    "expected_report": "AC 43-10C.pdf",
+    "relevant_pages": [0, 12],
+    "reference_answer": "MIP stands for Maintenance Implementation Procedures.",
+    "category": "keyword"
+  },
+  {
+    "id": "eval_015",
+    "question": "What oversight responsibilities are described for the FAA and TCCA in AC 43-10C?",
+    "expected_report": "AC 43-10C.pdf",
+    "relevant_pages": [1],
+    "reference_answer": "The FAA and TCCA provide oversight of repair stations, approved maintenance organizations and relevant certificated personnel to ensure quality of maintenance work and compliance with each country's regulatory requirements.",
+    "category": "semantic"
+  },
+
+  {
+    "id": "eval_016",
+    "question": "What is the goal of the small-airplane fatigue requirements in AC 23-13A?",
+    "expected_report": "AC_23-13A.pdf",
+    "relevant_pages": [9],
+    "reference_answer": "The goal is to maintain the airplane structure's design strength capability, including limit and ultimate load capability, throughout the operational life of the airplane.",
+    "category": "semantic"
+  },
+  {
+    "id": "eval_017",
+    "question": "How does AC 23-13A describe compliance with fail-safe design requirements?",
+    "expected_report": "AC_23-13A.pdf",
+    "relevant_pages": [29],
+    "reference_answer": "Fail-safe compliance relies on an inspection program capable of detecting fatigue cracks and other partial failures before they become dangerous, with appropriate inspection methods and schedules.",
+    "category": "keyword"
+  },
+  {
+    "id": "eval_018",
+    "question": "How should inspection intervals for cracked structures be determined according to AC 23-13A?",
+    "expected_report": "AC_23-13A.pdf",
+    "relevant_pages": [37],
+    "reference_answer": "Inspection intervals should be conservatively established using approved crack-growth data and fracture-mechanics evaluation while ensuring a high probability of detecting cracks before they compromise structural safety.",
+    "category": "semantic"
+  },
+
+  {
+    "id": "eval_019",
+    "question": "What weather conditions were pilots forecast to encounter in the NASA general aviation weather study?",
+    "expected_report": "63_ASRS_GA_WeatherEncounters.pdf",
+    "relevant_pages": [16],
+    "reference_answer": "Some pilots were forecast to remain in visual meteorological conditions throughout their flights, while many reported marginal VMC or instrument meteorological conditions for one or more flight segments.",
+    "category": "semantic"
+  },
+  {
+    "id": "eval_020",
+    "question": "What non-weather contributing factors were reported in the NASA general aviation weather encounters study?",
+    "expected_report": "63_ASRS_GA_WeatherEncounters.pdf",
+    "relevant_pages": [26],
+    "reference_answer": "Many pilots reported that factors in addition to weather contributed to their encounters, including operational and decision-making pressures discussed in the study.",
+    "category": "semantic"
+  }
+]

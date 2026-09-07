@@ -1,0 +1,11 @@
+Retrieval Evaluation (20 queries)
+---------------------------------
+Hit Rate@5:          85.0%
+Recall@5:            75.8%
+MRR:                  0.708
+
+Generation Evaluation (19 queries)
+----------------------------------
+Faithfulness:        100.0%  (16 document-grounded)
+Answer Relevancy:     90.8%  (19 queries)
+Context Relevancy:    75.0%  (16 document-grounded)
