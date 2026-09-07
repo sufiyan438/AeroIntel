@@ -38,6 +38,8 @@ class AeroIntelTools:
             if not report:
                 return "No matching report metadata found."
 
+            print("\nTool Executed: search_metadata")
+
             return (
                 f"Report ID: {report.get('report_id')}\n"
                 f"Title: {report.get('title')}\n"
@@ -85,7 +87,7 @@ class AeroIntelTools:
                     f"[Source: {filename}, Page: {page}]\n"
                     f"{doc.page_content}"
                 )
-
+            print("\nTool Executed: search_documents")
             return "\n\n".join(evidence)
 
         @tool
@@ -125,6 +127,8 @@ class AeroIntelTools:
                 return "No relevant knowledge graph evidence found."
 
             return self.graph.format_evidence(evidence)
+
+        print("\nTool Executed: search_knowledge_graph")
 
         return [
             search_metadata,

@@ -25,28 +25,72 @@
 #         return response.content, results
 
 
-from app.langgraph.workflow import AeroWorkflow
+# from app.langgraph.workflow import AeroWorkflow
+# from app.config.settings import TOP_K
+
+
+# class RAGEngine:
+
+#     def __init__(self):
+#         self.workflow = AeroWorkflow()
+
+#     def ask(self, question: str, scope="Both", top_k=TOP_K):
+#         state = {
+#             "question": question,
+#             "scope": scope,
+#             "top_k": top_k,
+#             "route": "",
+#             "answer": "",
+#             "documents": []
+#         }
+
+#         result = self.workflow.app.invoke(state)
+
+#         return (
+#             result["answer"],
+#             result["documents"]
+#         )
+
+
+
+
+
+
+from app.langgraph.tool_workflow import ToolAeroWorkflow
 from app.config.settings import TOP_K
 
 
 class RAGEngine:
 
     def __init__(self):
-        self.workflow = AeroWorkflow()
+        self.workflow = ToolAeroWorkflow()
 
     def ask(self, question: str, scope="Both", top_k=TOP_K):
+
         state = {
             "question": question,
             "scope": scope,
-            "top_k": top_k,
-            "route": "",
+            "messages": [],
             "answer": "",
-            "documents": []
+            "top_k": top_k,
+            "documents": [],
+            "graph_evidence": [],
+            "evidence_sufficient": False,
+            "retry_count": 0,
+            "recovery_action": "",
+            "executed_tools": [],
+            "tool_execution_allowed": True
         }
 
         result = self.workflow.app.invoke(state)
 
+
+        print(
+            "\nTools used for this query:",
+            result.get("executed_tools", []),
+            flush=True
+        )
         return (
             result["answer"],
-            result["documents"]
+            result.get("documents", [])
         )
