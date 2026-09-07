@@ -64,9 +64,11 @@ Page: {doc.metadata.get("page", 0) + 1}]
 
     Aircraft: {report['aircraft']}
     """
+            state["evidence_sufficient"] = True
 
         else:
             state["answer"] = "No matching report found."
+            state["evidence_sufficient"] = False
 
         state["documents"] = []
         return state
